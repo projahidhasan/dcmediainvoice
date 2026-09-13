@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imazix - Quotation & Invoice Studio</title>
+  <meta name="description" content="Minimalist Quotation & Invoice Studio for Imazix with a clean A4 printable layout.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-icon-box">
+        <i data-lucide="file-text"></i>
+      </div>
+      <div>
+        <h1 class="brand-title">Imazix</h1>
+        <p class="brand-subtitle">Quotation & Invoice Studio</p>
+      </div>
+    </div>
+
+    <!-- Mode Switcher Pill -->
+    <div class="mode-switcher" id="modeSwitcher">
+      <button class="mode-btn active" data-mode="quotation" id="btnModeQuotation">
+        <i data-lucide="calculator" style="width: 14px; height: 14px;"></i>
+        Quotation
+      </button>
+      <button class="mode-btn" data-mode="invoice" id="btnModeInvoice">
+        <i data-lucide="receipt" style="width: 14px; height: 14px;"></i>
+        Invoice
+      </button>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button class="btn btn-teal-light btn-sm" id="btnLoadDemo">
+        <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+        Demo Data
+      </button>
+      <button class="btn btn-secondary btn-sm" id="btnConvert" style="display: inline-flex;" title="Convert Quotation to Invoice">
+        <i data-lucide="arrow-right-left" style="width: 14px; height: 14px;"></i>
+        <span id="convertBtnText">Convert to Invoice</span>
+      </button>
+      <button class="btn btn-secondary btn-sm" id="btnToggleHistory">
+        <i data-lucide="history" style="width: 14px; height: 14px;"></i>
+        History (<span id="historyCount">0</span>)
+      </button>
+      <button class="btn btn-teal btn-sm" id="btnSaveDoc">
+        <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+        Save
+      </button>
+      <button class="btn btn-teal btn-sm" id="btnPrint">
+        <i data-lucide="printer" style="width: 14px; height: 14px;"></i>
+        Print / PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- App Main Split View -->
+  <main class="app-container">
+
+    <!-- Left Clean Editor Panel -->
+    <aside class="editor-panel">
+      
+      <!-- Studio Header Tag -->
+      <div class="editor-tabs-single">
+        <span class="single-tab-title">
+          <i data-lucide="sliders" style="width: 16px; height: 16px; color: var(--teal-700);"></i>
+          Items & Pricing Studio
+        </span>
+        <span class="badge-tag">Imazix</span>
+      </div>
+
+      <div class="editor-content-clean">
+        
+        <!-- CARD 1: Line Items & Quantities (Primary Section) -->
+        <div class="card-section">
+          <div class="card-header">
+            <span class="card-title">
+              <i data-lucide="list-todo" style="width: 16px; height: 16px;"></i>
+              Line Items & Quantities
+            </span>
+            <button class="btn btn-teal btn-sm" id="btnAddItem">
+              <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+              Add Item
+            </button>
+          </div>
+
+          <!-- Items Table -->
+          <div style="overflow-x: auto;">
+            <table class="items-table clean-table">
+              <thead>
+                <tr>
+                  <th style="width: 39%;">Item Description</th>
+                  <th style="width: 15%;">Qty</th>
+                  <th style="width: 22%;">Unit Price</th>
+                  <th style="width: 16%;">Discount</th>
+                  <th style="width: 8%;"></th>
+                </tr>
+              </thead>
+              <tbody id="itemsEditorBody">
+                <!-- Single Item Row Injected by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tax, Discount & Fees -->
+          <div class="form-grid dual-grid" style="margin-top: 1rem; border-top: 1px dashed var(--slate-200); padding-top: 0.85rem;">
+            <div class="form-group">
+              <label class="form-label" for="taxRate">VAT / Tax (%)</label>
+              <input type="number" id="taxRate" class="form-control" value="0" min="0" step="0.5" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="discountRate">Additional Discount (%)</label>
+              <input type="number" id="discountRate" class="form-control" value="0" min="0" step="0.5" placeholder="0">
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label" for="shippingFee">Extra Fee / Delivery (৳)</label>
+              <input type="number" id="shippingFee" class="form-control" value="0" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: Document & Client Details -->
+        <div class="card-section">
+          <div class="card-header">
+            <span class="card-title">
+              <i data-lucide="file-spreadsheet" style="width: 16px; height: 16px;"></i>
+              Document & Client Info
+            </span>
+            <button class="btn btn-secondary btn-sm" id="btnSaveBusinessDefaults" title="Save Imazix defaults">
+              Save Defaults
+            </button>
+          </div>
+
+          <div class="form-grid dual-grid">
+            <div class="form-group">
+              <label class="form-label" for="docNumber">Doc Number</label>
+              <input type="text" id="docNumber" class="form-control" value="QT-2026-001">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="docCurrency">Currency</label>
+              <select id="docCurrency" class="form-control">
+                <option value="৳" selected>BDT (৳)</option>
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="£">GBP (£)</option>
+                <option value="₹">INR (₹)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="issueDate">Issue Date</label>
+              <input type="date" id="issueDate" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label" id="lblDueDate" for="dueDate">Valid Until</label>
+              <input type="date" id="dueDate" class="form-control">
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label" for="deliveryTime">Delivery Timeline / Time</label>
+              <input type="text" id="deliveryTime" class="form-control" value="5-7 Working Days" placeholder="e.g. 5-7 Working Days">
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label" for="docStatus">Status Stamp</label>
+              <select id="docStatus" class="form-control">
+                <option value="DRAFT">Draft</option>
+                <option value="SENT" selected>Sent</option>
+                <option value="ACCEPTED">Accepted / Approved</option>
+                <option value="PAID">Paid</option>
+                <option value="PENDING">Pending Payment</option>
+                <option value="OVERDUE">Overdue</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Parties Info -->
+          <div class="form-grid dual-grid" style="margin-top: 0.85rem; border-top: 1px dashed var(--slate-200); padding-top: 0.85rem;">
+            <div class="form-group span-2">
+              <label class="form-label" for="senderName">Company Name</label>
+              <input type="text" id="senderName" class="form-control" value="Imazix">
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label" for="senderDetails">Imazix Contact Info</label>
+              <textarea id="senderDetails" class="form-control" rows="2" placeholder="Dhaka, Bangladesh&#10;Email: hello@imazix.com | Phone: +880 1700-000000"></textarea>
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label" for="clientName">Client Name / Organization</label>
+              <input type="text" id="clientName" class="form-control" placeholder="e.g. Divinely Bangladesh">
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label" for="clientDetails">Client Address & Contact</label>
+              <textarea id="clientDetails" class="form-control" rows="2" placeholder="Attn: Procurement Team&#10;Dhaka, Bangladesh"></textarea>
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label" for="companyLogo">Company Logo (Optional)</label>
+              <input type="file" id="companyLogo" class="form-control" accept="image/*">
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 3: Payment Instructions & Digital Signature -->
+        <div class="card-section">
+          <div class="card-header">
+            <span class="card-title">
+              <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
+              Payment Instructions & Notes
+            </span>
+          </div>
+
+          <div class="form-grid dual-grid">
+            <div class="form-group span-2">
+              <label class="form-label" for="paymentDetails">Bank / bKash / Payment Details</label>
+              <textarea id="paymentDetails" class="form-control" rows="2" placeholder="Bank: Dutch-Bangla Bank Ltd (DBBL)&#10;Account: 123-456-7890&#10;bKash / Nagad: +880 1700-000000"></textarea>
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label" for="notes">Notes & Terms</label>
+              <textarea id="notes" class="form-control" rows="2" placeholder="Thank you for choosing Imazix!"></textarea>
+            </div>
+
+            <!-- Signature Options -->
+            <div class="form-group span-2" style="border-top: 1px dashed var(--slate-200); padding-top: 0.85rem; margin-top: 0.35rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                <label class="form-label" style="font-weight: 700; color: var(--teal-800); display: flex; align-items: center; gap: 0.35rem;">
+                  <i data-lucide="pen-tool" style="width: 14px; height: 14px;"></i> Digital Signature
+                </label>
+                <div style="display: flex; gap: 0.4rem;">
+                  <button class="btn btn-teal-light btn-sm" id="btnOpenSignatureModal">
+                    <i data-lucide="edit-3" style="width: 12px; height: 12px;"></i> Draw
+                  </button>
+                </div>
+              </div>
+
+              <!-- Upload Signature Image Input -->
+              <div class="form-group" style="margin-top: 0.2rem;">
+                <label class="form-label" for="signatureFileInput" style="font-size: 0.7rem; color: var(--slate-500);">Upload Signature Photo / Image (PNG / JPG):</label>
+                <input type="file" id="signatureFileInput" class="form-control" accept="image/*">
+              </div>
+
+              <!-- Signature Active Preview Bar -->
+              <div id="signaturePreviewContainer" style="display: none; align-items: center; justify-content: space-between; background: var(--slate-50); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--slate-200); margin-top: 0.6rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <img id="signatureImage" src="" alt="Signature" style="max-height: 36px; max-width: 140px; object-fit: contain;">
+                  <span style="font-size: 0.72rem; color: var(--success-text); font-weight: 700;">✓ Transparent Ink Applied</span>
+                </div>
+                <div style="display: flex; gap: 0.35rem;">
+                  <button class="btn btn-secondary btn-sm" id="btnReExtractSignature" title="Adjust extraction sensitivity" style="padding: 2px 8px; font-size: 0.72rem;">Adjust</button>
+                  <button class="btn btn-remove-item" id="btnClearSignature" title="Remove signature">
+                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Right Live Preview Panel -->
+    <section class="preview-panel">
+
+      <!-- Preview Header Control Bar -->
+      <div class="preview-toolbar">
+        <div class="preview-status-indicator">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--teal-500); display: inline-block;"></span>
+          Imazix Live Preview
+        </div>
+        <div style="font-size: 0.78rem; color: var(--slate-500); font-weight: 500;">
+          A4 Printable Layout
+        </div>
+      </div>
+
+      <!-- Document Paper Canvas -->
+      <div class="document-paper" id="document-paper">
+        
+        <!-- Status Stamp Badge (Paid, Pending, Draft, etc.) -->
+        <div class="status-stamp SENT" id="statusStamp">SENT</div>
+
+        <!-- Top Header Bar with Deep Teal Accent Line -->
+        <div class="doc-top-bar">
+          <div class="doc-brand-area">
+            <img id="docLogoView" class="doc-logo-preview" src="" alt="" style="display: none;">
+            <h2 class="doc-company-name" id="docSenderName">Imazix</h2>
+            <p class="doc-company-details" id="docSenderDetails">Dhaka, Bangladesh&#10;Email: hello@imazix.com</p>
+          </div>
+          
+          <div class="doc-meta-area">
+            <div class="doc-type-badge" id="docTypeBadge">QUOTATION</div>
+            <div class="doc-number" id="docNumberView"># QT-2026-001</div>
+            
+            <table class="doc-dates-table">
+              <tr>
+                <td class="label">Issue Date:</td>
+                <td class="value" id="docIssueDateView">2026-07-20</td>
+              </tr>
+              <tr>
+                <td class="label" id="docDueDateLabel">Valid Until:</td>
+                <td class="value" id="docDueDateView">2026-08-04</td>
+              </tr>
+              <tr id="docDeliveryRow">
+                <td class="label">Delivery Time:</td>
+                <td class="value" id="docDeliveryView">5-7 Working Days</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Client & Bill To Grid (Deep Teal Left Accent) -->
+        <div class="doc-parties-grid">
+          <div class="party-box">
+            <div class="party-title" id="docClientLabel">Prepared For</div>
+            <div class="party-name" id="docClientName">Divinely Bangladesh</div>
+            <p class="party-details" id="docClientDetails">Attn: Client Contact&#10;Dhaka, Bangladesh</p>
+          </div>
+          <div class="party-box" style="border-left-color: var(--teal-600);">
+            <div class="party-title" style="color: var(--teal-600);">Prepared By</div>
+            <div class="party-name" id="docPreparedByName">Imazix</div>
+            <p class="party-details" id="docPreparedByDetails">Creative & Digital Team</p>
+          </div>
+        </div>
+
+        <!-- Line Items Table -->
+        <div class="doc-table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th style="width: 5%;">#</th>
+                <th style="width: 39%;">Description</th>
+                <th class="center" style="width: 10%;">Qty</th>
+                <th class="right" style="width: 18%;">Unit Price</th>
+                <th class="center" style="width: 13%;">Discount</th>
+                <th class="right" style="width: 15%;">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="docTableBody">
+              <!-- Rendered Line Items -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Total Summary Box (Deep Teal Accent Total Box) -->
+        <div class="doc-summary-area">
+          <div class="doc-summary-box">
+            <div class="summary-row">
+              <span class="label">Original Subtotal</span>
+              <span class="value" id="docSubtotalView">৳0.00</span>
+            </div>
+            <div class="summary-row" id="docItemDiscountRow" style="display: none;">
+              <span class="label">Item Discounts</span>
+              <span class="value" id="docItemDiscountAmtView">-৳0.00</span>
+            </div>
+            <div class="summary-row" id="docDiscountRow" style="display: none;">
+              <span class="label">Additional Discount (<span id="docDiscountRateView">0</span>%)</span>
+              <span class="value" id="docDiscountAmtView">-৳0.00</span>
+            </div>
+            <div class="summary-row" id="docTaxRow" style="display: none;">
+              <span class="label">VAT / Tax (<span id="docTaxRateView">0</span>%)</span>
+              <span class="value" id="docTaxAmtView">+৳0.00</span>
+            </div>
+            <div class="summary-row" id="docShippingRow" style="display: none;">
+              <span class="label">Extra Fee</span>
+              <span class="value" id="docShippingAmtView">+৳0.00</span>
+            </div>
+            
+            <div class="summary-row total-row">
+              <span class="label" id="docTotalLabel">Total Estimate</span>
+              <span class="value" id="docGrandTotalView">৳0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side-by-Side Dual Equal Payment Methods Grid (Bank Details + SSLCommerz) -->
+        <div class="payment-methods-grid" id="paymentMethodsGrid">
+          <!-- Injected dynamically by JS -->
+        </div>
+
+        <!-- Footer Grid: Notes & Signature -->
+        <div class="doc-footer-grid">
+          <div>
+            <div class="footer-block-title" id="docNotesTitle">Quotation Terms</div>
+            <p class="footer-block-content" id="docNotesTermsView">Thank you for choosing Imazix!</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end;">
+            <div id="docSignatureBox" style="display: flex; flex-direction: column; align-items: center;">
+              <img id="docSignatureView" class="signature-img-preview" src="assets/signature.png" alt="Authorized signature">
+              <div class="signature-line" id="docSignatureLabel">Authorized Signature (Imazix)</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Signature Draw Modal -->
+  <div class="modal-overlay" id="signatureModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Draw Digital Signature</h3>
+        <button class="btn btn-remove-item" id="btnCloseSignatureModal">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--slate-500);">Use your mouse or touchscreen to sign below.</p>
+      <canvas id="signatureCanvas" class="signature-canvas" width="470" height="170"></canvas>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button class="btn btn-secondary btn-sm" id="btnClearCanvas">Clear Pad</button>
+        <button class="btn btn-teal btn-sm" id="btnApplySignature">Apply Signature</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signature Interactive Extraction Studio Modal -->
+  <div class="modal-overlay" id="signatureExtractModal">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i data-lucide="wand-2" style="width: 18px; height: 18px; color: var(--teal-700);"></i>
+          Signature Extractor Studio
+        </h3>
+        <button class="btn btn-remove-item" id="btnCloseExtractModal">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <p style="font-size: 0.78rem; color: var(--slate-600);">Adjust the slider below until the paper background disappears and only your clean signature ink remains visible!</p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+        <!-- Left Box: Original Photo -->
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-600);">Original Photo:</span>
+          <div style="border: 1px solid var(--slate-300); border-radius: var(--radius-sm); overflow: hidden; background: #fff; height: 160px; display: flex; align-items: center; justify-content: center;">
+            <img id="rawSignatureImg" src="" alt="Raw Signature" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+          </div>
+        </div>
+
+        <!-- Right Box: Extracted Transparent Signature Preview -->
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <span style="font-size: 0.72rem; font-weight: 700; color: var(--teal-800);">Extracted Transparent Ink:</span>
+          <div class="transparent-checker-bg" style="border: 1px solid var(--teal-500); border-radius: var(--radius-sm); height: 160px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px;">
+            <img id="extractedSignaturePreview" src="" alt="Extracted Signature" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Sensitivity Control Sliders -->
+      <div style="background: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.85rem; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 0.65rem; margin-top: 0.5rem;">
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" for="thresholdRange" style="font-weight: 700;">Paper Removal Sensitivity</label>
+            <span id="thresholdVal" style="font-size: 0.75rem; font-weight: 700; color: var(--teal-800);">160</span>
+          </div>
+          <input type="range" id="thresholdRange" min="50" max="245" value="160" style="width: 100%; accent-color: var(--teal-800);">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+          <label style="font-size: 0.78rem; font-weight: 600; color: var(--slate-700); display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+            <input type="checkbox" id="chkEnhanceInk" checked>
+            Darken Ink (Sharp Black/Blue Pen)
+          </label>
+          <label style="font-size: 0.78rem; font-weight: 600; color: var(--slate-700); display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+            <input type="checkbox" id="chkAutoCrop" checked>
+            Auto-Crop Margins
+          </label>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+        <button class="btn btn-secondary btn-sm" id="btnResetExtractor">Reset</button>
+        <button class="btn btn-teal btn-sm" id="btnApplyExtractedSignature">
+          <i data-lucide="check" style="width: 14px; height: 14px;"></i> Use Extracted Signature
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Drawer -->
+  <div class="drawer" id="historyDrawer">
+    <div class="drawer-header">
+      <h3 style="font-size: 1rem; font-weight: 700;">Saved Imazix Documents</h3>
+      <button class="btn btn-remove-item" id="btnCloseHistory" style="color: #FFFFFF;">
+        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+      </button>
+    </div>
+    <div class="drawer-body" id="historyList">
+      <!-- Injected History Items -->
+    </div>
+  </div>
+
+  <!-- App Main Logic Script -->
+  <script src="app.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
