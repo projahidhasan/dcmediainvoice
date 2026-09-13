@@ -103,13 +103,20 @@ body {
 .brand-icon-box {
   width: 38px;
   height: 38px;
-  background: linear-gradient(135deg, var(--teal-800), var(--teal-700));
-  color: #FFFFFF;
+  background: var(--teal-50);
+  border: 1px solid var(--teal-100);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(13, 92, 99, 0.25);
+  box-shadow: 0 4px 10px rgba(13, 92, 99, 0.12);
+  overflow: hidden;
+}
+
+.brand-icon-image {
+  width: 29px;
+  height: 29px;
+  object-fit: contain;
 }
 
 .brand-title {
@@ -743,10 +750,17 @@ textarea.form-control {
 }
 
 .doc-logo-preview {
-  max-height: 60px;
-  max-width: 190px;
+  width: 210px;
+  height: 56px;
   object-fit: contain;
+  object-position: left center;
   margin-bottom: 0.3rem;
+}
+
+.quote-page-logo {
+  width: 190px;
+  height: 48px;
+  margin-bottom: 0.15rem;
 }
 
 .doc-company-name {

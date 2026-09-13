@@ -26,7 +26,7 @@
     sender: {
       name: 'Imazix',
       details: 'Dhaka, Bangladesh\nEmail: hello@imazix.com\nPhone: +880 1700-000000',
-      logo: ''
+      logo: 'assets/imazix-logo.png'
     },
     
     client: {
@@ -171,6 +171,7 @@
     docNotesTermsView: document.getElementById('docNotesTermsView'),
     docSignatureView: document.getElementById('docSignatureView'),
     docSignatureLabel: document.getElementById('docSignatureLabel'),
+    quotePage2Logo: document.getElementById('quotePage2Logo'),
     quotePage2Sender: document.getElementById('quotePage2Sender'),
     quotePage2Number: document.getElementById('quotePage2Number'),
     docRequirementsView: document.getElementById('docRequirementsView'),
@@ -256,7 +257,11 @@
       const saved = localStorage.getItem(SENDER_DEFAULTS_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        state.sender = { ...state.sender, ...parsed };
+        state.sender = {
+          ...state.sender,
+          ...parsed,
+          logo: parsed.logo || state.sender.logo
+        };
       }
     } catch (e) {
       console.warn('Could not load sender defaults', e);
@@ -578,8 +583,15 @@
     if (state.sender.logo) {
       els.docLogoView.src = state.sender.logo;
       els.docLogoView.style.display = 'block';
+      els.quotePage2Logo.src = state.sender.logo;
+      els.quotePage2Logo.style.display = 'block';
+      els.docSenderName.style.display = 'none';
+      els.quotePage2Sender.style.display = 'none';
     } else {
       els.docLogoView.style.display = 'none';
+      els.quotePage2Logo.style.display = 'none';
+      els.docSenderName.style.display = 'block';
+      els.quotePage2Sender.style.display = 'block';
     }
 
     // Sender & Client Views
