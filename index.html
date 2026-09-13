@@ -84,10 +84,13 @@
               <i data-lucide="list-todo" style="width: 16px; height: 16px;"></i>
               Line Items & Quantities
             </span>
-            <button class="btn btn-teal btn-sm" id="btnAddItem">
-              <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
-              Add Item
-            </button>
+            <div class="item-add-control">
+              <span class="item-limit-note">Maximum 5 items</span>
+              <button class="btn btn-teal btn-sm" id="btnAddItem">
+                <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                Add Item
+              </button>
+            </div>
           </div>
 
           <!-- Items Table -->
@@ -202,20 +205,31 @@
           </div>
         </div>
 
-        <!-- CARD 3: Payment Instructions & Digital Signature -->
+        <!-- CARD 3: Quotation Requirements -->
+        <div class="card-section" id="quoteScopeEditor">
+          <div class="card-header">
+            <span class="card-title">
+              <i data-lucide="clipboard-list" style="width: 16px; height: 16px;"></i>
+              Quotation Requirements & Scope
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="scopeRequirements">Project requirements, deliverables and inclusions</label>
+            <textarea id="scopeRequirements" class="form-control scope-editor" rows="10" maxlength="1300" placeholder="Project objective:&#10;&#10;Requirements & deliverables:&#10;• Requirement one&#10;• Requirement two&#10;&#10;Client responsibilities / exclusions:"></textarea>
+            <span class="field-help">Designed to fit quotation page 2. Keep the scope within 1,300 characters.</span>
+          </div>
+        </div>
+
+        <!-- CARD 4: Notes & Digital Signature -->
         <div class="card-section">
           <div class="card-header">
             <span class="card-title">
-              <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
-              Payment Instructions & Notes
+              <i data-lucide="pen-tool" style="width: 16px; height: 16px;"></i>
+              Notes & Signature
             </span>
           </div>
 
           <div class="form-grid dual-grid">
-            <div class="form-group span-2">
-              <label class="form-label" for="paymentDetails">Bank / bKash / Payment Details</label>
-              <textarea id="paymentDetails" class="form-control" rows="2" placeholder="Bank: Dutch-Bangla Bank&#10;Account: 3031100011876&#10;Name: Divine Consultancy&#10;Branch: Banasree&#10;bKash / Rocket: 01410-506559"></textarea>
-            </div>
             <div class="form-group span-2">
               <label class="form-label" for="notes">Notes & Terms</label>
               <textarea id="notes" class="form-control" rows="2" placeholder="Thank you for choosing Imazix!"></textarea>
@@ -275,7 +289,7 @@
       </div>
 
       <!-- Document Paper Canvas -->
-      <div class="document-paper" id="document-paper">
+      <div class="document-paper quotation-mode" id="document-paper">
         
         <!-- Status Stamp Badge (Paid, Pending, Draft, etc.) -->
         <div class="status-stamp SENT" id="statusStamp">SENT</div>
@@ -373,13 +387,18 @@
           </div>
         </div>
 
-        <!-- Side-by-Side Dual Equal Payment Methods Grid (Bank Details + SSLCommerz) -->
+        <!-- Invoice-only SSLCommerz payment block -->
         <div class="payment-methods-grid" id="paymentMethodsGrid">
           <!-- Injected dynamically by JS -->
         </div>
 
-        <!-- Footer Grid: Notes & Signature -->
-        <div class="doc-footer-grid">
+        <div class="quote-page-one-footer" id="quotePageOneFooter">
+          <span>Detailed requirements, terms and approval continue on page 2.</span>
+          <strong>Page 1 of 2</strong>
+        </div>
+
+        <!-- Invoice Footer Grid: Notes & Signature -->
+        <div class="doc-footer-grid" id="primaryDocFooter">
           <div>
             <div class="footer-block-title" id="docNotesTitle">Quotation Terms</div>
             <p class="footer-block-content" id="docNotesTermsView">Thank you for choosing Imazix!</p>
@@ -393,6 +412,62 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- Quotation Page 2: Requirements, Terms & Approval -->
+      <div class="document-paper quotation-details-page" id="quotationDetailsPage">
+        <div class="doc-top-bar compact-header">
+          <div class="doc-brand-area">
+            <h2 class="doc-company-name" id="quotePage2Sender">Imazix</h2>
+            <p class="doc-company-details">Project Requirements & Commercial Terms</p>
+          </div>
+          <div class="doc-meta-area">
+            <div class="doc-type-badge">QUOTATION DETAILS</div>
+            <div class="doc-number" id="quotePage2Number"># QT-2026-001</div>
+            <div class="page-counter">Page 2 of 2</div>
+          </div>
+        </div>
+
+        <section class="quote-scope-section">
+          <div class="section-heading-row">
+            <div>
+              <span class="section-kicker">Scope of Work</span>
+              <h3>Project Requirements & Deliverables</h3>
+            </div>
+          </div>
+          <div class="scope-content" id="docRequirementsView"></div>
+        </section>
+
+        <div class="quote-facts-grid">
+          <div class="quote-fact">
+            <span>Valid Until</span>
+            <strong id="quotePage2ValidUntil">—</strong>
+          </div>
+          <div class="quote-fact">
+            <span>Delivery Timeline</span>
+            <strong id="quotePage2Delivery">—</strong>
+          </div>
+          <div class="quote-fact">
+            <span>Estimated Investment</span>
+            <strong id="quotePage2Total">৳0.00</strong>
+          </div>
+        </div>
+
+        <section class="quote-terms-section">
+          <span class="section-kicker">Terms & Approval</span>
+          <p class="footer-block-content" id="quotePage2Notes">Standard terms apply.</p>
+        </section>
+
+        <div class="quote-approval-footer">
+          <div>
+            <span class="section-kicker">Prepared For</span>
+            <strong id="quotePage2Client">Divinely Bangladesh</strong>
+          </div>
+          <div class="quote-signature-wrap">
+            <img id="quotePage2Signature" class="signature-img-preview" src="assets/signature.png" alt="Authorized signature">
+            <div class="signature-line" id="quotePage2SignatureLabel">Authorized Signature (Imazix)</div>
+          </div>
+        </div>
       </div>
 
     </section>

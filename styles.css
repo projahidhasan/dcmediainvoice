@@ -306,6 +306,30 @@ body {
   border-bottom: 1px solid var(--slate-100);
 }
 
+.item-add-control {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.item-limit-note,
+.field-help {
+  color: var(--slate-500);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+  box-shadow: none;
+}
+
+.scope-editor {
+  min-height: 230px !important;
+}
+
 .card-title {
   font-size: 0.82rem;
   font-weight: 800;
@@ -438,6 +462,11 @@ textarea.form-control {
   grid-template-columns: 1fr;
 }
 
+.invoice-payment {
+  margin-left: auto;
+  width: 100%;
+}
+
 .payment-box {
   background: var(--slate-50);
   border: 1px solid var(--slate-200);
@@ -565,7 +594,8 @@ textarea.form-control {
 .document-paper {
   width: 100%;
   max-width: 800px;
-  min-height: 1000px;
+  height: 1131px;
+  min-height: 1131px;
   background: #FFFFFF;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-preview);
@@ -576,6 +606,112 @@ textarea.form-control {
   transition: var(--transition-normal);
   color: var(--slate-800);
   font-size: 0.92rem;
+  overflow: hidden;
+}
+
+.document-paper.invoice-mode {
+  padding: 2.2rem 2.5rem;
+}
+
+.quotation-details-page {
+  margin-top: 1.5rem;
+  padding: 2.5rem 3rem;
+}
+
+.invoice-mode .doc-top-bar {
+  margin-bottom: 1rem;
+  padding-bottom: 0.85rem;
+}
+
+.invoice-mode .doc-parties-grid {
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.invoice-mode .party-box {
+  padding: 0.7rem 1rem;
+}
+
+.invoice-mode .party-name {
+  font-size: 0.95rem;
+}
+
+.invoice-mode .party-details,
+.invoice-mode .doc-company-details {
+  font-size: 0.78rem;
+}
+
+.invoice-mode .doc-table-wrapper {
+  margin-bottom: 0.85rem;
+}
+
+.invoice-mode .doc-table th {
+  font-size: 0.7rem;
+  padding: 0.5rem 0.6rem;
+}
+
+.invoice-mode .doc-table td {
+  font-size: 0.8rem;
+  line-height: 1.3;
+  padding: 0.5rem 0.6rem;
+}
+
+.invoice-mode .doc-summary-area {
+  margin-bottom: 0.85rem;
+}
+
+.invoice-mode .doc-summary-box {
+  width: 310px;
+  gap: 0.15rem;
+}
+
+.invoice-mode .summary-row {
+  font-size: 0.78rem;
+  padding: 2px 0;
+}
+
+.invoice-mode .summary-row.total-row {
+  padding: 0.55rem 0.9rem;
+}
+
+.invoice-mode .summary-row.total-row .value {
+  font-size: 1.05rem;
+}
+
+.invoice-mode .payment-methods-grid {
+  margin-bottom: 0.75rem;
+}
+
+.invoice-mode .ssl-compact {
+  display: grid;
+  grid-template-columns: 1fr 190px;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 0.9rem;
+}
+
+.invoice-mode .ssl-box-desc {
+  margin-bottom: 0;
+}
+
+.invoice-mode .doc-footer-grid {
+  gap: 1rem;
+  padding-top: 0.7rem;
+}
+
+.invoice-mode .footer-block-content {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.invoice-mode .signature-img-preview {
+  width: 140px;
+  height: 54px;
+}
+
+.invoice-mode .signature-line {
+  width: 145px;
+  font-size: 0.68rem;
 }
 
 /* Minimalist Document Top Header */
@@ -808,6 +944,130 @@ textarea.form-control {
 
 .quote-guidance strong {
   color: var(--teal-900);
+}
+
+.quote-page-one-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--slate-200);
+  padding-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--slate-500);
+  font-size: 0.75rem;
+}
+
+.quote-page-one-footer strong,
+.page-counter {
+  color: var(--teal-800);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.compact-header {
+  margin-bottom: 1.5rem;
+}
+
+.section-heading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--teal-100);
+}
+
+.section-heading-row h3 {
+  color: var(--slate-900);
+  font-size: 1.2rem;
+  margin-top: 0.15rem;
+}
+
+.section-kicker {
+  color: var(--teal-700);
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.quote-scope-section {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.scope-content {
+  color: var(--slate-700);
+  flex: 1;
+  font-size: 0.88rem;
+  line-height: 1.58;
+  max-height: 560px;
+  overflow: hidden;
+  padding: 1rem 0;
+  white-space: pre-wrap;
+}
+
+.quote-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.quote-fact {
+  background: var(--teal-50);
+  border: 1px solid var(--teal-100);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+}
+
+.quote-fact span {
+  color: var(--slate-500);
+  display: block;
+  font-size: 0.67rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  text-transform: uppercase;
+}
+
+.quote-fact strong {
+  color: var(--teal-900);
+  font-size: 0.82rem;
+}
+
+.quote-terms-section {
+  border-top: 1px solid var(--slate-200);
+  padding-top: 0.85rem;
+}
+
+.quote-terms-section .footer-block-content {
+  margin-top: 0.35rem;
+}
+
+.quote-approval-footer {
+  align-items: flex-end;
+  border-top: 1px solid var(--slate-200);
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+}
+
+.quote-approval-footer strong {
+  color: var(--slate-900);
+  display: block;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.quote-signature-wrap {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Summary Box (Deep Teal Accent Box) */
@@ -1054,11 +1314,20 @@ textarea.form-control {
   color: var(--slate-500);
 }
 
-/* Media Print stylesheet overrides */
+/* Exact A4 print contract: invoice = 1 page, quotation = 2 pages */
+@page {
+  size: A4;
+  margin: 0;
+}
+
 @media print {
+  html,
   body {
     background: #FFFFFF !important;
     color: #000000 !important;
+    height: auto !important;
+    margin: 0 !important;
+    width: 210mm !important;
   }
 
   .app-header,
@@ -1080,16 +1349,32 @@ textarea.form-control {
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
+    width: 210mm !important;
   }
 
   .document-paper {
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
+    break-after: page;
+    height: 297mm !important;
+    margin: 0 !important;
     max-width: none !important;
-    min-height: auto !important;
+    min-height: 297mm !important;
+    overflow: hidden !important;
+    padding: 12mm 14mm !important;
+    page-break-after: always;
+    width: 210mm !important;
+  }
+
+  .document-paper.invoice-mode,
+  .quotation-details-page {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .quotation-details-page {
+    margin-top: 0 !important;
   }
 
   .status-stamp {

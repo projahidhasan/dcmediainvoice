@@ -7,8 +7,11 @@
   'use strict';
 
   const SSL_PAYMENT_URL = 'https://invoice.sslcommerz.com/invoice-form?refer=6735D0BBEEC26';
+  const MAX_ITEMS = 5;
+  const MAX_SCOPE_LENGTH = 1300;
   const DEFAULT_QUOTATION_NOTES = 'Thank you for choosing Imazix. This quotation is valid until the date shown above and work begins after written approval.';
   const DEFAULT_INVOICE_NOTES = 'Thank you for choosing Imazix. Please complete payment by the due date and mention the invoice number with your payment.';
+  const DEFAULT_SCOPE_REQUIREMENTS = 'Project objective:\nCreate a polished digital presence and campaign-ready content for the client.\n\nRequirements & deliverables:\n• Website design and development based on approved content\n• Video editing and post-production for supplied footage\n• Design assets required for launch and promotion\n• Review rounds and final delivery in agreed formats\n\nClient responsibilities / exclusions:\n• Client will provide final copy, brand assets and timely feedback\n• Any work outside this scope will be quoted separately';
 
   // --- Initial Default State ---
   const state = {
@@ -40,8 +43,7 @@
     discountRate: 0,
     shippingFee: 0,
 
-    // Bank & Mobile Transfer Info
-    paymentDetails: 'Bank: Dutch-Bangla Bank\nAccount: 3031100011876\nName: Divine Consultancy\nBranch: Banasree\nbKash / Rocket: 01410-506559',
+    scopeRequirements: DEFAULT_SCOPE_REQUIREMENTS,
     notes: DEFAULT_QUOTATION_NOTES,
     signature: 'assets/signature.png'
   };
@@ -93,7 +95,8 @@
     discountRate: document.getElementById('discountRate'),
     shippingFee: document.getElementById('shippingFee'),
 
-    paymentDetails: document.getElementById('paymentDetails'),
+    quoteScopeEditor: document.getElementById('quoteScopeEditor'),
+    scopeRequirements: document.getElementById('scopeRequirements'),
     notes: document.getElementById('notes'),
 
     // Signature
@@ -160,10 +163,24 @@
     docGrandTotalView: document.getElementById('docGrandTotalView'),
 
     paymentMethodsGrid: document.getElementById('paymentMethodsGrid'),
+    documentPaper: document.getElementById('document-paper'),
+    primaryDocFooter: document.getElementById('primaryDocFooter'),
+    quotePageOneFooter: document.getElementById('quotePageOneFooter'),
+    quotationDetailsPage: document.getElementById('quotationDetailsPage'),
     docNotesTitle: document.getElementById('docNotesTitle'),
     docNotesTermsView: document.getElementById('docNotesTermsView'),
     docSignatureView: document.getElementById('docSignatureView'),
     docSignatureLabel: document.getElementById('docSignatureLabel'),
+    quotePage2Sender: document.getElementById('quotePage2Sender'),
+    quotePage2Number: document.getElementById('quotePage2Number'),
+    docRequirementsView: document.getElementById('docRequirementsView'),
+    quotePage2ValidUntil: document.getElementById('quotePage2ValidUntil'),
+    quotePage2Delivery: document.getElementById('quotePage2Delivery'),
+    quotePage2Total: document.getElementById('quotePage2Total'),
+    quotePage2Notes: document.getElementById('quotePage2Notes'),
+    quotePage2Client: document.getElementById('quotePage2Client'),
+    quotePage2Signature: document.getElementById('quotePage2Signature'),
+    quotePage2SignatureLabel: document.getElementById('quotePage2SignatureLabel'),
 
     // History Drawer
     historyDrawer: document.getElementById('historyDrawer'),
@@ -198,7 +215,7 @@
   }
 
   function autoExpandAllTextareas() {
-    [els.senderDetails, els.clientDetails, els.paymentDetails, els.notes].forEach(textarea => {
+    [els.senderDetails, els.clientDetails, els.scopeRequirements, els.notes].forEach(textarea => {
       autoExpandTextarea(textarea);
     });
   }
@@ -212,7 +229,7 @@
       return [{ id: Date.now(), description: '', qty: 1, price: 0, discountRate: 0 }];
     }
 
-    return items.map((item, index) => ({
+    return items.slice(0, MAX_ITEMS).map((item, index) => ({
       id: item.id || Date.now() + index,
       description: item.description || '',
       qty: Number(item.qty) || 0,
@@ -284,10 +301,10 @@
     els.discountRate.addEventListener('input', (e) => { state.discountRate = clampPercent(e.target.value); render(); });
     els.shippingFee.addEventListener('input', (e) => { state.shippingFee = parseFloat(e.target.value) || 0; render(); });
 
-    els.paymentDetails.addEventListener('input', (e) => { 
-      state.paymentDetails = e.target.value; 
+    els.scopeRequirements.addEventListener('input', (e) => {
+      state.scopeRequirements = e.target.value.slice(0, MAX_SCOPE_LENGTH);
       autoExpandTextarea(e.target);
-      render(); 
+      render();
     });
     
     els.notes.addEventListener('input', (e) => { 
@@ -338,6 +355,7 @@
 
     // Add Item Row
     els.btnAddItem.addEventListener('click', () => {
+      if (state.items.length >= MAX_ITEMS) return;
       const newId = Date.now();
       state.items.push({ id: newId, description: '', qty: 1, price: 0, discountRate: 0 });
       renderItemsEditor();
@@ -422,7 +440,8 @@
     els.discountRate.value = state.discountRate;
     els.shippingFee.value = state.shippingFee;
 
-    els.paymentDetails.value = state.paymentDetails;
+    state.scopeRequirements = String(state.scopeRequirements || DEFAULT_SCOPE_REQUIREMENTS).slice(0, MAX_SCOPE_LENGTH);
+    els.scopeRequirements.value = state.scopeRequirements;
     els.notes.value = state.notes;
 
     renderItemsEditor();
@@ -432,6 +451,8 @@
   // --- Render Editor Line Items Table ---
   function renderItemsEditor() {
     els.itemsEditorBody.innerHTML = '';
+    els.btnAddItem.disabled = state.items.length >= MAX_ITEMS;
+    els.btnAddItem.title = state.items.length >= MAX_ITEMS ? 'Maximum 5 items reached' : 'Add another item';
     state.items.forEach((item, idx) => {
       const tr = document.createElement('tr');
       tr.className = 'item-row';
@@ -520,6 +541,13 @@
   // --- Main Render Function (Live Preview Sync) ---
   function render() {
     const isQuotation = state.type === 'quotation';
+
+    els.documentPaper.classList.toggle('quotation-mode', isQuotation);
+    els.documentPaper.classList.toggle('invoice-mode', !isQuotation);
+    els.quoteScopeEditor.style.display = isQuotation ? 'block' : 'none';
+    els.quotationDetailsPage.style.display = isQuotation ? 'flex' : 'none';
+    els.quotePageOneFooter.style.display = isQuotation ? 'flex' : 'none';
+    els.primaryDocFooter.style.display = isQuotation ? 'none' : 'grid';
 
     // Type Badge & Header Titles
     els.docTypeBadge.textContent = isQuotation ? 'QUOTATION' : 'INVOICE';
@@ -646,45 +674,40 @@
     // Grand Total
     els.docGrandTotalView.textContent = formatMoney(grandTotal, state.currency);
 
-    // Quotation explains approval; invoice provides payment actions.
-    const bankInfoText = escapeHtml(state.paymentDetails || 'Payment details will be provided.').replace(/\n/g, '<br>');
+    // Quotation page 2 mirrors the commercial summary and holds the detailed scope.
+    els.quotePage2Sender.textContent = state.sender.name || 'Imazix';
+    els.quotePage2Number.textContent = `# ${state.docNumber || '0000'}`;
+    els.docRequirementsView.textContent = String(state.scopeRequirements || DEFAULT_SCOPE_REQUIREMENTS).slice(0, MAX_SCOPE_LENGTH);
+    els.quotePage2ValidUntil.textContent = state.dueDate || '—';
+    els.quotePage2Delivery.textContent = state.deliveryTime || 'To be confirmed';
+    els.quotePage2Total.textContent = formatMoney(grandTotal, state.currency);
+    els.quotePage2Notes.textContent = state.notes || DEFAULT_QUOTATION_NOTES;
+    els.quotePage2Client.textContent = state.client.name || 'Client Name';
+    els.quotePage2SignatureLabel.textContent = `Authorized Signature (${state.sender.name || 'Imazix'})`;
 
+    // Quotations never show payment options; invoices use SSLCommerz only.
     if (isQuotation) {
-      els.paymentMethodsGrid.className = 'payment-methods-grid single-col';
-      els.paymentMethodsGrid.innerHTML = `
-        <div class="quote-guidance">
-          <strong>Next step:</strong> Approve this quotation in writing. Imazix will then confirm the schedule and issue an invoice with payment instructions.
-        </div>
-      `;
+      els.paymentMethodsGrid.style.display = 'none';
+      els.paymentMethodsGrid.innerHTML = '';
     } else {
-      els.paymentMethodsGrid.className = 'payment-methods-grid';
+      els.paymentMethodsGrid.style.display = 'grid';
+      els.paymentMethodsGrid.className = 'payment-methods-grid single-col invoice-payment';
       els.paymentMethodsGrid.innerHTML = `
-      <!-- Left Equal Box: Bank & Mobile Transfer -->
-      <div class="payment-box bank-box">
-        <div>
-          <div class="payment-box-title" style="margin-bottom: 0.35rem;">
-            <i data-lucide="building-2" style="width: 15px; height: 15px;"></i> Bank & Mobile Transfer
-          </div>
-          <div class="payment-box-content">${bankInfoText}</div>
-        </div>
-      </div>
-
-      <!-- Right Equal Box: SSLCommerz Online Payment Card -->
-      <div class="payment-box ssl-box">
-        <div>
-          <div class="payment-box-header">
-            <div class="payment-box-title">
-              <i data-lucide="shield-check" style="width: 15px; height: 15px; color: #14B8A6;"></i> SSLCommerz Pay
+        <div class="payment-box ssl-box ssl-compact">
+          <div>
+            <div class="payment-box-header">
+              <div class="payment-box-title">
+                <i data-lucide="shield-check" style="width: 15px; height: 15px; color: #14B8A6;"></i> Secure Online Payment
+              </div>
+              <span class="ssl-sub-tag">SSLCommerz</span>
             </div>
-            <span class="ssl-sub-tag">Instant Payment</span>
+            <p class="ssl-box-desc">Pay securely with Visa, Mastercard, bKash, Nagad or Internet Banking.</p>
           </div>
-          <p class="ssl-box-desc">Accepts Visa, Mastercard, bKash, Nagad & Internet Banking.</p>
+          <a href="${SSL_PAYMENT_URL}" target="_blank" rel="noopener noreferrer" class="ssl-pay-action-btn">
+            <span>Pay Online Now</span>
+            <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+          </a>
         </div>
-        <a href="${SSL_PAYMENT_URL}" target="_blank" rel="noopener noreferrer" class="ssl-pay-action-btn">
-          <span>Pay Online Now</span>
-          <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
-        </a>
-      </div>
       `;
     }
 
@@ -695,11 +718,14 @@
     // Signature View Sync
     if (state.signature) {
       els.docSignatureView.src = state.signature;
+      els.quotePage2Signature.src = state.signature;
       els.docSignatureView.style.display = 'block';
+      els.quotePage2Signature.style.display = 'block';
       els.signatureImage.src = state.signature;
       els.signaturePreviewContainer.style.display = 'flex';
     } else {
       els.docSignatureView.style.display = 'none';
+      els.quotePage2Signature.style.display = 'none';
       els.signaturePreviewContainer.style.display = 'none';
     }
   }
@@ -926,7 +952,7 @@
     state.discountRate = 0;
     state.shippingFee = 0;
 
-    state.paymentDetails = 'Bank: Dutch-Bangla Bank\nAccount: 3031100011876\nName: Divine Consultancy\nBranch: Banasree\nbKash / Rocket: 01410-506559';
+    state.scopeRequirements = DEFAULT_SCOPE_REQUIREMENTS;
     state.notes = DEFAULT_QUOTATION_NOTES;
     state.signature = 'assets/signature.png';
 
@@ -1031,6 +1057,7 @@
         const docToLoad = history[idx];
         Object.assign(state, docToLoad);
         state.items = normalizeItems(state.items);
+        state.scopeRequirements = state.scopeRequirements || DEFAULT_SCOPE_REQUIREMENTS;
         setMode(state.type);
         populateFormFields();
         render();
