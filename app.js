@@ -41,7 +41,7 @@
     shippingFee: 0,
 
     // Bank & Mobile Transfer Info
-    paymentDetails: 'Bank and mobile transfer details will be added here.',
+    paymentDetails: 'Bank: Dutch-Bangla Bank\nAccount: 3031100011876\nName: Divine Consultancy\nBranch: Banasree\nbKash / Rocket: 01410-506559',
     notes: DEFAULT_QUOTATION_NOTES,
     signature: 'assets/signature.png'
   };
@@ -926,7 +926,7 @@
     state.discountRate = 0;
     state.shippingFee = 0;
 
-    state.paymentDetails = 'Bank and mobile transfer details will be added here.';
+    state.paymentDetails = 'Bank: Dutch-Bangla Bank\nAccount: 3031100011876\nName: Divine Consultancy\nBranch: Banasree\nbKash / Rocket: 01410-506559';
     state.notes = DEFAULT_QUOTATION_NOTES;
     state.signature = 'assets/signature.png';
 
