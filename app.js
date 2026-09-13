@@ -25,7 +25,7 @@
     
     sender: {
       name: 'Imazix',
-      details: 'Dhaka, Bangladesh\nEmail: hello@imazix.com\nPhone: +880 1700-000000',
+      details: 'Dominant, 1st Floor, A-1, House 30/32, Road 5, Sector 1, Block E, Aftabnagar, Dhaka\nPhone: 01933-554982',
       logo: 'assets/imazix-logo.png'
     },
     
@@ -54,7 +54,7 @@
 
   // Storage Keys
   const HISTORY_STORAGE_KEY = 'imazix_history_v1';
-  const SENDER_DEFAULTS_KEY = 'imazix_sender_defaults_v1';
+  const SENDER_DEFAULTS_KEY = 'imazix_sender_defaults_v2';
 
   // --- DOM Element References ---
   const els = {
@@ -78,6 +78,7 @@
     issueDate: document.getElementById('issueDate'),
     dueDate: document.getElementById('dueDate'),
     lblDueDate: document.getElementById('lblDueDate'),
+    deliveryTimeGroup: document.getElementById('deliveryTimeGroup'),
     deliveryTime: document.getElementById('deliveryTime'),
     docStatus: document.getElementById('docStatus'),
 
@@ -550,6 +551,7 @@
     els.documentPaper.classList.toggle('quotation-mode', isQuotation);
     els.documentPaper.classList.toggle('invoice-mode', !isQuotation);
     els.quoteScopeEditor.style.display = isQuotation ? 'block' : 'none';
+    els.deliveryTimeGroup.style.display = isQuotation ? 'flex' : 'none';
     els.quotationDetailsPage.style.display = isQuotation ? 'flex' : 'none';
     els.quotePageOneFooter.style.display = isQuotation ? 'flex' : 'none';
     els.primaryDocFooter.style.display = isQuotation ? 'none' : 'grid';
@@ -572,7 +574,7 @@
     els.docDueDateView.textContent = state.dueDate || '—';
 
     // Delivery Time Row View
-    if (state.deliveryTime && state.deliveryTime.trim() !== '') {
+    if (isQuotation && state.deliveryTime && state.deliveryTime.trim() !== '') {
       els.docDeliveryRow.style.display = 'table-row';
       els.docDeliveryView.textContent = state.deliveryTime;
     } else {
@@ -946,7 +948,7 @@
 
     state.sender = {
       name: 'Imazix',
-      details: 'Dhaka, Bangladesh\nEmail: hello@imazix.com\nPhone: +880 1700-000000',
+      details: 'Dominant, 1st Floor, A-1, House 30/32, Road 5, Sector 1, Block E, Aftabnagar, Dhaka\nPhone: 01933-554982',
       logo: state.sender.logo
     };
 
